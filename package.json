@@ -1,0 +1,21 @@
+{
+  "name": "industrialservice",
+  "version": "1.0.0",
+  "description": "Service to handle industrial requests",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lucas Carvalho",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.868.0",
+    "cors": "^2.8.5",
+    "dynamodb-data-types": "^3.0.1",
+    "express": "^4.17.1",
+    "lodash": "^4.17.21",
+    "request": "^2.88.2",
+    "util": "^0.12.3",
+    "uuid": "^8.3.2"
+  }
+}
