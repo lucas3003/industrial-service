@@ -27,7 +27,7 @@ class SnsNotificationController {
             switch(req.body.Subject) {
                 case "NewSupply":
                     console.error(req.body)
-                    return await this.supplyController.newSupply(message);
+                    return await this.supplyController.newSupply(message, res);
             }            
         } else {
             throw new Error(`Invalid message type ${req.Type}`);

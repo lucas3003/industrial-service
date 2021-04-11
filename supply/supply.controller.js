@@ -10,7 +10,7 @@ class SupplyController {
         res.send(allItems);
     }
 
-    async newSupply(payload) {
+    async newSupply(payload, res) {
         try {
             await this.supplyModel.create(payload);
             return res.sendStatus(200);
