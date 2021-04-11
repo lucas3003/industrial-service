@@ -1,12 +1,11 @@
 const AWS = require('aws-sdk');
 const _ = require('lodash');
+const BaseModel = require('../model/BaseModel');
 
-
-class SalesModel {
+class SalesModel extends BaseModel {
 
     constructor() {
-        this.ddb = new AWS.DynamoDB({region: 'us-east-1'});
-        this.tableName = "Sales"
+        super("Sales");
     }
 
     async create({id, productId, date, soldUnits, countryOfDestiny, unitAmount}) {
@@ -50,22 +49,6 @@ class SalesModel {
         const updateResult = await this.ddb.updateItem(params).promise();
         return updateResult;
 
-    }
-
-    async getAllItems() {
-
-        const params = {
-            TableName: this.tableName
-        }
-
-        try {
-            const data = await this.ddb.scan(params).promise();
-            const unwrapedData = _.map(data.Items, (item) => AWS.DynamoDB.Converter.unmarshall(item));
-            return unwrapedData;
-        } catch(err) {
-            console.error('Error getting Sales data ', err);
-            throw err;
-        }
     }
 }
 

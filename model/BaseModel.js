@@ -26,6 +26,22 @@ class BaseModel {
             throw err;
         }
     }
+
+    async getAllItems() {
+
+        const params = {
+            TableName: this.tableName
+        }
+
+        try {
+            const data = await this.ddb.scan(params).promise();
+            const unwrapedData = _.map(data.Items, (item) => AWS.DynamoDB.Converter.unmarshall(item));
+            return unwrapedData;
+        } catch(err) {
+            console.error('Error getting item data ', err);
+            throw err;
+        }
+    }
 }
 
 module.exports = BaseModel;

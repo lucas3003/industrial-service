@@ -5,13 +5,12 @@ const { v4: uuidv4 } = require('uuid');
 
 const SupplyModel = require('../supply/supply.model');
 const ProductModel = require('../product/product.model');
-const { now } = require('lodash');
+const BaseModel = require('../model/BaseModel');
 
-class ProductionModel {
+class ProductionModel extends BaseModel {
 
     constructor() {
-        this.ddb = new AWS.DynamoDB({region: 'us-east-1'});
-        this.tableName = 'Production';
+        super("Production");
 
         this.supplyModel = new SupplyModel();
         this.productModel = new ProductModel();
@@ -26,7 +25,6 @@ class ProductionModel {
         for(let i = 0; i < productSupplies.length; i++) {
             const availableSupply = await this.supplyModel.getById(productSupplies[i].id);
             if(!this.isSupplyEnough(productSupplies[i].qty*qty, availableSupply.qty)) {
-                console.error("Quantity is not enough");
                 throw new Error("Quantity is not enough");
             }
         }

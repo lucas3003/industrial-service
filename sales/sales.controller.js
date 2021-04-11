@@ -15,23 +15,19 @@ class SalesController {
         res.send(allItems);
     }
 
-    
+    async getById(req, res, next) {
+        const item = await this.salesModel.getById(req.params.id);
+        res.send(item);
+    }
 
     async create(req, res, next) {
         try {
             const id = uuidv4();
             req.body.id = id;
-            await this.salesModel.create(req.body);
 
             try {
-                await this.productionModel.newProduction(
-                    {
-                        productId: req.body.productId,
-                        qty: req.body.soldUnits
-                    }
-                )
-
-                await this.salesModel.updateSentToProduction(id, true);
+                await this.salesModel.create(req.body);
+                await this._sendToProduction(id);
 
                 //If everything goes fine: Sent to production
             } catch(err) {
@@ -41,15 +37,37 @@ class SalesController {
             } finally {
                 return res.sendStatus(200);
             }
-
-            //Trigger production. That should actually put a production request on a queue
-            //Then production could execute messages once at time
         } catch (err) {
             console.error('Insert sale failed: ', err)
             return res.sendStatus(400).send(err);
-        }
-        
+        }   
     }
+
+    async sendToProduction(req, res, next) {
+        try {
+            await this._sendToProduction(req.body.id)
+            return res.sendStatus(200);
+        } catch(err) {
+            console.error("Sale not sent to production: ", err)
+            return res.sendStatus(400);
+        }
+    }
+
+    async _sendToProduction(id) {
+        const saleData = await this.salesModel.getById(id);
+
+        await this.productionModel.newProduction(
+            {
+                productId: saleData.productId,
+                qty: saleData.soldUnits
+            }
+        )
+
+        await this.salesModel.updateSentToProduction(id, true);
+    }
+
+
+
 }
 
 module.exports = SalesController;
